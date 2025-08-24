@@ -23,7 +23,8 @@ try {
     console.log('✅ Clean completed\n');
 
     // Step 2: Run Next.js build
-    console.log('2️⃣ Running Next.js build...');
+    console.log('2️⃣ Running Next.js build with Google Sheets data fetching...');
+    console.log('📊 This will fetch QR URL mappings from Google Sheets during build');
     execSync('npm run build', { stdio: 'inherit' });
     console.log('✅ Build completed\n');
 
