@@ -152,73 +152,47 @@ export class Router {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f9fafb;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
           }
           .container {
             text-align: center;
             max-width: 500px;
             padding: 3rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
           }
           .logo {
             width: 80px;
             height: 80px;
             margin: 0 auto 2rem;
-            background: white;
-            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            animation: float 3s ease-in-out infinite;
           }
           .logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
           }
-          @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-          }
           .org-name {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #374151;
             margin-bottom: 2rem;
           }
           .error-code {
-            font-size: 6rem;
+            font-size: 4rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #d1d5db;
             margin: 0;
             line-height: 1;
-            animation: pulse 2s ease-in-out infinite;
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
           }
           .error-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: #111827;
+            color: #374151;
             margin: 1rem 0;
           }
           .error-message {
@@ -229,29 +203,15 @@ export class Router {
           .btn {
             display: inline-block;
             padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: #3b82f6;
             color: white;
             text-decoration: none;
-            border-radius: 50px;
+            border-radius: 0.5rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: background-color 0.2s ease;
           }
           .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-          }
-          .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fbbf24;
-            border-radius: 50%;
-            animation: sparkle 2s linear infinite;
-          }
-          @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
+            background: #2563eb;
           }
         </style>
       </head>
@@ -268,12 +228,6 @@ export class Router {
             URL을 다시 확인해 주세요.
           </p>
           <a href="${this.BASE_URL}" class="btn">메인으로 이동</a>
-          
-          <!-- Sparkle effects -->
-          <div class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
-          <div class="sparkle" style="top: 30%; right: 20%; animation-delay: 0.5s;"></div>
-          <div class="sparkle" style="bottom: 25%; left: 25%; animation-delay: 1s;"></div>
-          <div class="sparkle" style="bottom: 35%; right: 15%; animation-delay: 1.5s;"></div>
         </div>
       </body>
       </html>
@@ -298,112 +252,70 @@ export class Router {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #f9fafb;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
           }
           .container {
             text-align: center;
             max-width: 500px;
             padding: 3rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
           }
           .logo {
             width: 80px;
             height: 80px;
             margin: 0 auto 2rem;
-            background: white;
-            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            animation: shake 0.5s ease-in-out infinite alternate;
           }
           .logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
           }
-          @keyframes shake {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(2px); }
-          }
           .org-name {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #374151;
             margin-bottom: 2rem;
           }
           .error-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            animation: bounce 1s ease-in-out infinite;
-          }
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
           }
           .error-title {
-            font-size: 1.8rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #374151;
             margin: 1rem 0;
           }
           .error-message {
             color: #6b7280;
             margin-bottom: 2rem;
             line-height: 1.6;
-            font-size: 1.1rem;
           }
           .btn {
             display: inline-block;
             padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+            background: #3b82f6;
             color: white;
             text-decoration: none;
-            border-radius: 50px;
+            border-radius: 0.5rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease;
             margin: 0 0.5rem;
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
           }
           .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+            background: #2563eb;
           }
           .btn-secondary {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            background: #6b7280;
           }
           .btn-secondary:hover {
-            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
-          }
-          .glitter {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            border-radius: 50%;
-            animation: glitter 3s linear infinite;
-          }
-          @keyframes glitter {
-            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+            background: #4b5563;
           }
         </style>
       </head>
@@ -418,14 +330,6 @@ export class Router {
           <p class="error-message">${message}</p>
           <a href="${this.BASE_URL}" class="btn">홈으로 가기</a>
           <a href="javascript:location.reload()" class="btn btn-secondary">다시 시도</a>
-          
-          <!-- Glitter effects -->
-          <div class="glitter" style="top: 15%; left: 10%; animation-delay: 0s;"></div>
-          <div class="glitter" style="top: 25%; right: 15%; animation-delay: 1s;"></div>
-          <div class="glitter" style="bottom: 20%; left: 20%; animation-delay: 2s;"></div>
-          <div class="glitter" style="bottom: 30%; right: 10%; animation-delay: 0.5s;"></div>
-          <div class="glitter" style="top: 50%; left: 5%; animation-delay: 1.5s;"></div>
-          <div class="glitter" style="top: 60%; right: 5%; animation-delay: 2.5s;"></div>
         </div>
       </body>
       </html>
