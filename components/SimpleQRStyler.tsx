@@ -85,7 +85,7 @@ export default function SimpleQRStyler({ data, onQRGenerated }: SimpleQRStylerPr
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* QR Code Preview */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center lg:sticky lg:top-6 lg:self-start">
           <h2 className="text-2xl font-bold mb-4">QR Code Preview</h2>
           
           <div className="relative bg-gray-50 p-8 rounded-lg border-2 border-dashed border-gray-300">
@@ -214,30 +214,60 @@ export default function SimpleQRStyler({ data, onQRGenerated }: SimpleQRStylerPr
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Background Color
                   </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={options.color?.light || '#ffffff'}
-                      onChange={(e) => updateOptions({ 
-                        color: { 
-                          ...options.color, 
-                          light: e.target.value 
-                        } 
-                      })}
-                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={options.color?.light || '#ffffff'}
-                      onChange={(e) => updateOptions({ 
-                        color: { 
-                          ...options.color, 
-                          light: e.target.value 
-                        } 
-                      })}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                      placeholder="#ffffff"
-                    />
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={options.color?.light === 'transparent'}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            updateOptions({ 
+                              color: { 
+                                ...options.color, 
+                                light: 'transparent' 
+                              } 
+                            });
+                          } else {
+                            updateOptions({ 
+                              color: { 
+                                ...options.color, 
+                                light: '#ffffff' 
+                              } 
+                            });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Transparent Background</span>
+                    </label>
+                    
+                    {options.color?.light !== 'transparent' && (
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          value={options.color?.light || '#ffffff'}
+                          onChange={(e) => updateOptions({ 
+                            color: { 
+                              ...options.color, 
+                              light: e.target.value 
+                            } 
+                          })}
+                          className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={options.color?.light || '#ffffff'}
+                          onChange={(e) => updateOptions({ 
+                            color: { 
+                              ...options.color, 
+                              light: e.target.value 
+                            } 
+                          })}
+                          className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          placeholder="#ffffff"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
