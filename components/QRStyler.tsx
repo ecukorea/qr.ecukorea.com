@@ -297,120 +297,527 @@ QR 코드 다운로드
                 </div>
               </div>
               
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-도트 색상
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={options.dotsOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        dotsOptions: { 
-                          ...options.dotsOptions, 
-                          color: e.target.value,
-                          gradient: undefined // Clear gradient when setting solid color
-                        } 
-                      })}
-                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={options.dotsOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        dotsOptions: { 
-                          ...options.dotsOptions, 
-                          color: e.target.value,
-                          gradient: undefined
-                        } 
-                      })}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                      placeholder="#000000"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-모서리 사각형 색상
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={options.cornersSquareOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        cornersSquareOptions: { 
-                          ...options.cornersSquareOptions, 
-                          color: e.target.value,
-                          gradient: undefined
-                        } 
-                      })}
-                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={options.cornersSquareOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        cornersSquareOptions: { 
-                          ...options.cornersSquareOptions, 
-                          color: e.target.value,
-                          gradient: undefined
-                        } 
-                      })}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                      placeholder="#000000"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-모서리 도트 색상
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={options.cornersDotOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        cornersDotOptions: { 
-                          ...options.cornersDotOptions, 
-                          color: e.target.value,
-                          gradient: undefined
-                        } 
-                      })}
-                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={options.cornersDotOptions?.color || '#000000'}
-                      onChange={(e) => updateOptions({ 
-                        cornersDotOptions: { 
-                          ...options.cornersDotOptions, 
-                          color: e.target.value,
-                          gradient: undefined
-                        } 
-                      })}
-                      className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                      placeholder="#000000"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-xs text-gray-500">
-모서리 사각형 안의 작은 도트 색상
-                    </p>
-                    <div className="flex items-center space-x-1 text-xs text-gray-400">
-                      <span>●</span>
-                      <span>in</span>
-                      <span>⬜</span>
+              {/* Dots Color and Gradient Options */}
+              <div className="space-y-6">
+                <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                  <h4 className="text-sm font-semibold text-blue-800 mb-3 flex items-center">
+                    <span className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></span>
+                    도트 색상 및 그라데이션
+                  </h4>
+                  
+                  {/* Dots Solid Color */}
+                  {!options.dotsOptions?.gradient && (
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">단색</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          value={options.dotsOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            dotsOptions: { 
+                              ...options.dotsOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={options.dotsOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            dotsOptions: { 
+                              ...options.dotsOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          placeholder="#000000"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Dots Gradient Toggle */}
+                  <label className="flex items-center space-x-2 mb-3">
+                    <input
+                      type="checkbox"
+                      checked={!!options.dotsOptions?.gradient}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          updateOptions({
+                            dotsOptions: {
+                              ...options.dotsOptions,
+                              color: undefined,
+                              gradient: {
+                                type: 'linear',
+                                rotation: 45,
+                                colorStops: [
+                                  { offset: 0, color: '#ff6b6b' },
+                                  { offset: 1, color: '#4ecdc4' }
+                                ]
+                              }
+                            }
+                          });
+                        } else {
+                          updateOptions({ 
+                            dotsOptions: {
+                              ...options.dotsOptions,
+                              gradient: undefined,
+                              color: '#000000'
+                            }
+                          });
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">그라데이션 사용</span>
+                  </label>
+
+                  {/* Dots Gradient Controls */}
+                  {options.dotsOptions?.gradient && (
+                    <div className="space-y-3 pl-4 border-l-2 border-blue-300">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">그라데이션 유형</label>
+                        <select
+                          value={options.dotsOptions.gradient.type || 'linear'}
+                          onChange={(e) => updateOptions({
+                            dotsOptions: {
+                              ...options.dotsOptions,
+                              gradient: { 
+                                ...options.dotsOptions!.gradient!, 
+                                type: e.target.value as 'linear' | 'radial' 
+                              }
+                            }
+                          })}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="linear">선형</option>
+                          <option value="radial">원형</option>
+                        </select>
+                      </div>
+
+                      {options.dotsOptions.gradient.type === 'linear' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">회전 (도)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            value={options.dotsOptions.gradient.rotation || 0}
+                            onChange={(e) => updateOptions({
+                              dotsOptions: {
+                                ...options.dotsOptions,
+                                gradient: { 
+                                  ...options.dotsOptions!.gradient!, 
+                                  rotation: parseInt(e.target.value) 
+                                }
+                              }
+                            })}
+                            className="w-full"
+                          />
+                          <span className="text-sm text-gray-500">{options.dotsOptions.gradient.rotation || 0}°</span>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">시작 색상</label>
+                          <input
+                            type="color"
+                            value={options.dotsOptions.gradient.colorStops?.[0]?.color || '#ff6b6b'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.dotsOptions!.gradient!.colorStops || [])];
+                              colorStops[0] = { offset: 0, color: e.target.value };
+                              updateOptions({
+                                dotsOptions: {
+                                  ...options.dotsOptions,
+                                  gradient: { 
+                                    ...options.dotsOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">끝 색상</label>
+                          <input
+                            type="color"
+                            value={options.dotsOptions.gradient.colorStops?.[1]?.color || '#4ecdc4'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.dotsOptions!.gradient!.colorStops || [])];
+                              colorStops[1] = { offset: 1, color: e.target.value };
+                              updateOptions({
+                                dotsOptions: {
+                                  ...options.dotsOptions,
+                                  gradient: { 
+                                    ...options.dotsOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-배경 색상
+                {/* Corner Squares Color and Gradient Options */}
+                <div className="p-4 border border-green-200 rounded-lg bg-green-50">
+                  <h4 className="text-sm font-semibold text-green-800 mb-3 flex items-center">
+                    <span className="w-3 h-3 border-2 border-green-600 rounded-sm mr-2"></span>
+                    모서리 사각형 색상 및 그라데이션
+                  </h4>
+                  
+                  {/* Corner Squares Solid Color */}
+                  {!options.cornersSquareOptions?.gradient && (
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">단색</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          value={options.cornersSquareOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            cornersSquareOptions: { 
+                              ...options.cornersSquareOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={options.cornersSquareOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            cornersSquareOptions: { 
+                              ...options.cornersSquareOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          placeholder="#000000"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Corner Squares Gradient Toggle */}
+                  <label className="flex items-center space-x-2 mb-3">
+                    <input
+                      type="checkbox"
+                      checked={!!options.cornersSquareOptions?.gradient}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          updateOptions({
+                            cornersSquareOptions: {
+                              ...options.cornersSquareOptions,
+                              color: undefined,
+                              gradient: {
+                                type: 'linear',
+                                rotation: 45,
+                                colorStops: [
+                                  { offset: 0, color: '#667eea' },
+                                  { offset: 1, color: '#764ba2' }
+                                ]
+                              }
+                            }
+                          });
+                        } else {
+                          updateOptions({ 
+                            cornersSquareOptions: {
+                              ...options.cornersSquareOptions,
+                              gradient: undefined,
+                              color: '#000000'
+                            }
+                          });
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">그라데이션 사용</span>
                   </label>
+
+                  {/* Corner Squares Gradient Controls */}
+                  {options.cornersSquareOptions?.gradient && (
+                    <div className="space-y-3 pl-4 border-l-2 border-green-300">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">그라데이션 유형</label>
+                        <select
+                          value={options.cornersSquareOptions.gradient.type || 'linear'}
+                          onChange={(e) => updateOptions({
+                            cornersSquareOptions: {
+                              ...options.cornersSquareOptions,
+                              gradient: { 
+                                ...options.cornersSquareOptions!.gradient!, 
+                                type: e.target.value as 'linear' | 'radial' 
+                              }
+                            }
+                          })}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="linear">선형</option>
+                          <option value="radial">원형</option>
+                        </select>
+                      </div>
+
+                      {options.cornersSquareOptions.gradient.type === 'linear' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">회전 (도)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            value={options.cornersSquareOptions.gradient.rotation || 0}
+                            onChange={(e) => updateOptions({
+                              cornersSquareOptions: {
+                                ...options.cornersSquareOptions,
+                                gradient: { 
+                                  ...options.cornersSquareOptions!.gradient!, 
+                                  rotation: parseInt(e.target.value) 
+                                }
+                              }
+                            })}
+                            className="w-full"
+                          />
+                          <span className="text-sm text-gray-500">{options.cornersSquareOptions.gradient.rotation || 0}°</span>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">시작 색상</label>
+                          <input
+                            type="color"
+                            value={options.cornersSquareOptions.gradient.colorStops?.[0]?.color || '#667eea'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.cornersSquareOptions!.gradient!.colorStops || [])];
+                              colorStops[0] = { offset: 0, color: e.target.value };
+                              updateOptions({
+                                cornersSquareOptions: {
+                                  ...options.cornersSquareOptions,
+                                  gradient: { 
+                                    ...options.cornersSquareOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">끝 색상</label>
+                          <input
+                            type="color"
+                            value={options.cornersSquareOptions.gradient.colorStops?.[1]?.color || '#764ba2'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.cornersSquareOptions!.gradient!.colorStops || [])];
+                              colorStops[1] = { offset: 1, color: e.target.value };
+                              updateOptions({
+                                cornersSquareOptions: {
+                                  ...options.cornersSquareOptions,
+                                  gradient: { 
+                                    ...options.cornersSquareOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Corner Dots Color and Gradient Options */}
+                <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
+                  <h4 className="text-sm font-semibold text-orange-800 mb-3 flex items-center">
+                    <span className="w-2 h-2 bg-orange-600 rounded-full mr-2"></span>
+                    모서리 도트 색상 및 그라데이션
+                  </h4>
+                  <p className="text-xs text-orange-700 mb-3 flex items-center">
+                    모서리 사각형 안의 작은 도트 색상
+                    <span className="ml-auto text-orange-400">● in ⬜</span>
+                  </p>
+                  
+                  {/* Corner Dots Solid Color */}
+                  {!options.cornersDotOptions?.gradient && (
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">단색</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          value={options.cornersDotOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            cornersDotOptions: { 
+                              ...options.cornersDotOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={options.cornersDotOptions?.color || '#000000'}
+                          onChange={(e) => updateOptions({ 
+                            cornersDotOptions: { 
+                              ...options.cornersDotOptions, 
+                              color: e.target.value,
+                              gradient: undefined
+                            } 
+                          })}
+                          className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          placeholder="#000000"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Corner Dots Gradient Toggle */}
+                  <label className="flex items-center space-x-2 mb-3">
+                    <input
+                      type="checkbox"
+                      checked={!!options.cornersDotOptions?.gradient}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          updateOptions({
+                            cornersDotOptions: {
+                              ...options.cornersDotOptions,
+                              color: undefined,
+                              gradient: {
+                                type: 'radial',
+                                colorStops: [
+                                  { offset: 0, color: '#ffeaa7' },
+                                  { offset: 1, color: '#fab1a0' }
+                                ]
+                              }
+                            }
+                          });
+                        } else {
+                          updateOptions({ 
+                            cornersDotOptions: {
+                              ...options.cornersDotOptions,
+                              gradient: undefined,
+                              color: '#000000'
+                            }
+                          });
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">그라데이션 사용</span>
+                  </label>
+
+                  {/* Corner Dots Gradient Controls */}
+                  {options.cornersDotOptions?.gradient && (
+                    <div className="space-y-3 pl-4 border-l-2 border-orange-300">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">그라데이션 유형</label>
+                        <select
+                          value={options.cornersDotOptions.gradient.type || 'radial'}
+                          onChange={(e) => updateOptions({
+                            cornersDotOptions: {
+                              ...options.cornersDotOptions,
+                              gradient: { 
+                                ...options.cornersDotOptions!.gradient!, 
+                                type: e.target.value as 'linear' | 'radial' 
+                              }
+                            }
+                          })}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="linear">선형</option>
+                          <option value="radial">원형</option>
+                        </select>
+                      </div>
+
+                      {options.cornersDotOptions.gradient.type === 'linear' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">회전 (도)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            value={options.cornersDotOptions.gradient.rotation || 0}
+                            onChange={(e) => updateOptions({
+                              cornersDotOptions: {
+                                ...options.cornersDotOptions,
+                                gradient: { 
+                                  ...options.cornersDotOptions!.gradient!, 
+                                  rotation: parseInt(e.target.value) 
+                                }
+                              }
+                            })}
+                            className="w-full"
+                          />
+                          <span className="text-sm text-gray-500">{options.cornersDotOptions.gradient.rotation || 0}°</span>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">시작 색상</label>
+                          <input
+                            type="color"
+                            value={options.cornersDotOptions.gradient.colorStops?.[0]?.color || '#ffeaa7'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.cornersDotOptions!.gradient!.colorStops || [])];
+                              colorStops[0] = { offset: 0, color: e.target.value };
+                              updateOptions({
+                                cornersDotOptions: {
+                                  ...options.cornersDotOptions,
+                                  gradient: { 
+                                    ...options.cornersDotOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">끝 색상</label>
+                          <input
+                            type="color"
+                            value={options.cornersDotOptions.gradient.colorStops?.[1]?.color || '#fab1a0'}
+                            onChange={(e) => {
+                              const colorStops = [...(options.cornersDotOptions!.gradient!.colorStops || [])];
+                              colorStops[1] = { offset: 1, color: e.target.value };
+                              updateOptions({
+                                cornersDotOptions: {
+                                  ...options.cornersDotOptions,
+                                  gradient: { 
+                                    ...options.cornersDotOptions!.gradient!, 
+                                    colorStops 
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Background Color Options */}
+                <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                  <h4 className="text-sm font-semibold text-gray-800 mb-3">배경 색상</h4>
+                  
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2">
                       <input
@@ -467,421 +874,6 @@ QR 코드 다운로드
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Gradient Options */}
-              <div className="space-y-4">
-                <h4 className="text-md font-semibold text-gray-800 border-t pt-4">그라데이션 옵션</h4>
-                
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={!!options.dotsOptions?.gradient}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        updateOptions({
-                          dotsOptions: {
-                            ...options.dotsOptions,
-                            color: undefined, // Clear solid color when using gradient
-                            gradient: {
-                              type: 'linear',
-                              rotation: 45,
-                              colorStops: [
-                                { offset: 0, color: '#ff6b6b' },
-                                { offset: 1, color: '#4ecdc4' }
-                              ]
-                            }
-                          }
-                        });
-                      } else {
-                        updateOptions({ 
-                          dotsOptions: {
-                            ...options.dotsOptions,
-                            gradient: undefined,
-                            color: '#000000'
-                          }
-                        });
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <span className="text-sm font-medium text-gray-700">도트에 그라데이션 사용</span>
-                </label>
-
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={!!options.cornersSquareOptions?.gradient}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        updateOptions({
-                          cornersSquareOptions: {
-                            ...options.cornersSquareOptions,
-                            color: undefined,
-                            gradient: {
-                              type: 'linear',
-                              rotation: 45,
-                              colorStops: [
-                                { offset: 0, color: '#667eea' },
-                                { offset: 1, color: '#764ba2' }
-                              ]
-                            }
-                          }
-                        });
-                      } else {
-                        updateOptions({ 
-                          cornersSquareOptions: {
-                            ...options.cornersSquareOptions,
-                            gradient: undefined,
-                            color: '#000000'
-                          }
-                        });
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <span className="text-sm font-medium text-gray-700">모서리 사각형에 그라데이션 사용</span>
-                </label>
-
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={!!options.cornersDotOptions?.gradient}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        updateOptions({
-                          cornersDotOptions: {
-                            ...options.cornersDotOptions,
-                            color: undefined,
-                            gradient: {
-                              type: 'radial',
-                              colorStops: [
-                                { offset: 0, color: '#ffeaa7' },
-                                { offset: 1, color: '#fab1a0' }
-                              ]
-                            }
-                          }
-                        });
-                      } else {
-                        updateOptions({ 
-                          cornersDotOptions: {
-                            ...options.cornersDotOptions,
-                            gradient: undefined,
-                            color: '#000000'
-                          }
-                        });
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <span className="text-sm font-medium text-gray-700">모서리 도트에 그라데이션 사용</span>
-                </label>
-
-                {/* Dots Gradient Controls */}
-                {options.dotsOptions?.gradient && (
-                  <div className="space-y-3 pl-6 border-l-2 border-blue-200">
-                    <h5 className="text-sm font-semibold text-blue-700">도트 그라데이션 설정</h5>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-그라데이션 유형
-                      </label>
-                      <select
-                        value={options.dotsOptions.gradient.type || 'linear'}
-                        onChange={(e) => updateOptions({
-                          dotsOptions: {
-                            ...options.dotsOptions,
-                            gradient: { 
-                              ...options.dotsOptions!.gradient!, 
-                              type: e.target.value as 'linear' | 'radial' 
-                            }
-                          }
-                        })}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="linear">선형</option>
-                        <option value="radial">원형</option>
-                      </select>
-                    </div>
-
-                    {options.dotsOptions.gradient.type === 'linear' && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-회전 (도)
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          value={options.dotsOptions.gradient.rotation || 0}
-                          onChange={(e) => updateOptions({
-                            dotsOptions: {
-                              ...options.dotsOptions,
-                              gradient: { 
-                                ...options.dotsOptions!.gradient!, 
-                                rotation: parseInt(e.target.value) 
-                              }
-                            }
-                          })}
-                          className="w-full"
-                        />
-                        <span className="text-sm text-gray-500">{options.dotsOptions.gradient.rotation || 0}°</span>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-시작 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.dotsOptions.gradient.colorStops?.[0]?.color || '#ff6b6b'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.dotsOptions!.gradient!.colorStops || [])];
-                            colorStops[0] = { offset: 0, color: e.target.value };
-                            updateOptions({
-                              dotsOptions: {
-                                ...options.dotsOptions,
-                                gradient: { 
-                                  ...options.dotsOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-끝 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.dotsOptions.gradient.colorStops?.[1]?.color || '#4ecdc4'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.dotsOptions!.gradient!.colorStops || [])];
-                            colorStops[1] = { offset: 1, color: e.target.value };
-                            updateOptions({
-                              dotsOptions: {
-                                ...options.dotsOptions,
-                                gradient: { 
-                                  ...options.dotsOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Corner Squares Gradient Controls */}
-                {options.cornersSquareOptions?.gradient && (
-                  <div className="space-y-3 pl-6 border-l-2 border-green-200">
-                    <h5 className="text-sm font-semibold text-green-700">모서리 사각형 그라데이션 설정</h5>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-그라데이션 유형
-                      </label>
-                      <select
-                        value={options.cornersSquareOptions.gradient.type || 'linear'}
-                        onChange={(e) => updateOptions({
-                          cornersSquareOptions: {
-                            ...options.cornersSquareOptions,
-                            gradient: { 
-                              ...options.cornersSquareOptions!.gradient!, 
-                              type: e.target.value as 'linear' | 'radial' 
-                            }
-                          }
-                        })}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="linear">선형</option>
-                        <option value="radial">원형</option>
-                      </select>
-                    </div>
-
-                    {options.cornersSquareOptions.gradient.type === 'linear' && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-회전 (도)
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          value={options.cornersSquareOptions.gradient.rotation || 0}
-                          onChange={(e) => updateOptions({
-                            cornersSquareOptions: {
-                              ...options.cornersSquareOptions,
-                              gradient: { 
-                                ...options.cornersSquareOptions!.gradient!, 
-                                rotation: parseInt(e.target.value) 
-                              }
-                            }
-                          })}
-                          className="w-full"
-                        />
-                        <span className="text-sm text-gray-500">{options.cornersSquareOptions.gradient.rotation || 0}°</span>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-시작 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.cornersSquareOptions.gradient.colorStops?.[0]?.color || '#667eea'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.cornersSquareOptions!.gradient!.colorStops || [])];
-                            colorStops[0] = { offset: 0, color: e.target.value };
-                            updateOptions({
-                              cornersSquareOptions: {
-                                ...options.cornersSquareOptions,
-                                gradient: { 
-                                  ...options.cornersSquareOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-끝 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.cornersSquareOptions.gradient.colorStops?.[1]?.color || '#764ba2'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.cornersSquareOptions!.gradient!.colorStops || [])];
-                            colorStops[1] = { offset: 1, color: e.target.value };
-                            updateOptions({
-                              cornersSquareOptions: {
-                                ...options.cornersSquareOptions,
-                                gradient: { 
-                                  ...options.cornersSquareOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Corner Dots Gradient Controls */}
-                {options.cornersDotOptions?.gradient && (
-                  <div className="space-y-3 pl-6 border-l-2 border-orange-200">
-                    <h5 className="text-sm font-semibold text-orange-700">모서리 도트 그라데이션 설정</h5>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-그라데이션 유형
-                      </label>
-                      <select
-                        value={options.cornersDotOptions.gradient.type || 'radial'}
-                        onChange={(e) => updateOptions({
-                          cornersDotOptions: {
-                            ...options.cornersDotOptions,
-                            gradient: { 
-                              ...options.cornersDotOptions!.gradient!, 
-                              type: e.target.value as 'linear' | 'radial' 
-                            }
-                          }
-                        })}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="linear">선형</option>
-                        <option value="radial">원형</option>
-                      </select>
-                    </div>
-
-                    {options.cornersDotOptions.gradient.type === 'linear' && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-회전 (도)
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          value={options.cornersDotOptions.gradient.rotation || 0}
-                          onChange={(e) => updateOptions({
-                            cornersDotOptions: {
-                              ...options.cornersDotOptions,
-                              gradient: { 
-                                ...options.cornersDotOptions!.gradient!, 
-                                rotation: parseInt(e.target.value) 
-                              }
-                            }
-                          })}
-                          className="w-full"
-                        />
-                        <span className="text-sm text-gray-500">{options.cornersDotOptions.gradient.rotation || 0}°</span>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-시작 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.cornersDotOptions.gradient.colorStops?.[0]?.color || '#ffeaa7'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.cornersDotOptions!.gradient!.colorStops || [])];
-                            colorStops[0] = { offset: 0, color: e.target.value };
-                            updateOptions({
-                              cornersDotOptions: {
-                                ...options.cornersDotOptions,
-                                gradient: { 
-                                  ...options.cornersDotOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-끝 색상
-                        </label>
-                        <input
-                          type="color"
-                          value={options.cornersDotOptions.gradient.colorStops?.[1]?.color || '#fab1a0'}
-                          onChange={(e) => {
-                            const colorStops = [...(options.cornersDotOptions!.gradient!.colorStops || [])];
-                            colorStops[1] = { offset: 1, color: e.target.value };
-                            updateOptions({
-                              cornersDotOptions: {
-                                ...options.cornersDotOptions,
-                                gradient: { 
-                                  ...options.cornersDotOptions!.gradient!, 
-                                  colorStops 
-                                }
-                              }
-                            });
-                          }}
-                          className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           )}
