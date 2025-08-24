@@ -119,7 +119,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
         
         {/* QR Code Preview */}
         <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4">QR Code Preview</h2>
+          <h2 className="text-2xl font-bold mb-4">QR 코드 미리보기</h2>
           
           <div className="relative bg-gray-50 p-8 rounded-lg border-2 border-dashed border-gray-300">
             {isGenerating ? (
@@ -134,7 +134,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
               />
             ) : (
               <div className="w-[300px] h-[300px] flex items-center justify-center text-gray-500">
-                QR Code will appear here
+QR 코드가 여기에 표시됩니다
               </div>
             )}
           </div>
@@ -146,22 +146,22 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
               download="qr-code.png"
               className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Download QR Code
+QR 코드 다운로드
             </a>
           )}
         </div>
 
         {/* Styling Controls */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Customize Your QR Code</h2>
+          <h2 className="text-2xl font-bold">QR 코드 사용자 정의</h2>
 
           {/* Tab Navigation */}
           <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
             {[
-              { id: 'style', label: 'Style' },
-              { id: 'colors', label: 'Colors' },
-              { id: 'logo', label: 'Logo' },
-              { id: 'advanced', label: 'Advanced' }
+              { id: 'style', label: '스타일' },
+              { id: 'colors', label: '색상' },
+              { id: 'logo', label: '로고' },
+              { id: 'advanced', label: '고급' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -180,18 +180,18 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
           {/* Style Tab */}
           {activeTab === 'style' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Quick Presets</h3>
+              <h3 className="text-lg font-semibold">빠른 프리셋</h3>
               
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { name: 'classic', label: 'Classic', color: '#000000' },
-                  { name: 'modern', label: 'Modern', color: '#2c3e50' },
-                  { name: 'vibrant', label: 'Vibrant', color: '#ff6b6b' },
-                  { name: 'neon', label: 'Neon', color: '#00ff88' },
-                  { name: 'business', label: 'Business', color: '#1a365d' },
-                  { name: 'ocean', label: 'Ocean', color: '#667eea' },
-                  { name: 'dots', label: 'Dots', color: '#7b68ee' },
-                  { name: 'classy', label: 'Classy', color: '#8b5cf6' }
+                  { name: 'classic', label: '클래식', color: '#000000' },
+                  { name: 'modern', label: '모던', color: '#2c3e50' },
+                  { name: 'vibrant', label: '생동감', color: '#ff6b6b' },
+                  { name: 'neon', label: '네온', color: '#00ff88' },
+                  { name: 'business', label: '비즈니스', color: '#1a365d' },
+                  { name: 'ocean', label: '오션', color: '#667eea' },
+                  { name: 'dots', label: '도트', color: '#7b68ee' },
+                  { name: 'classy', label: '클래시', color: '#8b5cf6' }
                 ].map((preset) => (
                   <button
                     key={preset.name}
@@ -210,7 +210,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dot Style
+도트 스타일
                   </label>
                   <select
                     value={options.dotsOptions?.type || 'square'}
@@ -222,18 +222,18 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     })}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="square">Square</option>
-                    <option value="dots">Dots (Circular)</option>
-                    <option value="rounded">Rounded</option>
-                    <option value="extra-rounded">Extra Rounded</option>
-                    <option value="classy">Classy</option>
-                    <option value="classy-rounded">Classy Rounded</option>
+                    <option value="square">사각형</option>
+                    <option value="dots">원형</option>
+                    <option value="rounded">둥근 모서리</option>
+                    <option value="extra-rounded">매우 둥근 모서리</option>
+                    <option value="classy">클래시</option>
+                    <option value="classy-rounded">클래시 둥근 모서리</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Corner Square Style
+모서리 사각형 스타일
                   </label>
                   <select
                     value={options.cornersSquareOptions?.type || 'square'}
@@ -245,15 +245,15 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     })}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="square">Square</option>
-                    <option value="dot">Dot</option>
-                    <option value="extra-rounded">Extra Rounded</option>
+                    <option value="square">사각형</option>
+                    <option value="dot">도트</option>
+                    <option value="extra-rounded">매우 둥근 모서리</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Corner Dot Style
+모서리 도트 스타일
                   </label>
                   <select
                     value={options.cornersDotOptions?.type || 'square'}
@@ -276,23 +276,23 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
           {/* Colors Tab */}
           {activeTab === 'colors' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Color Customization</h3>
+              <h3 className="text-lg font-semibold">색상 사용자 정의</h3>
               
               {/* Visual Guide */}
               <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <h4 className="text-sm font-medium text-blue-800 mb-2">QR Code Parts Guide</h4>
+                <h4 className="text-sm font-medium text-blue-800 mb-2">QR 코드 구성 요소 안내</h4>
                 <div className="grid grid-cols-3 gap-2 text-xs text-blue-700">
                   <div className="flex items-center space-x-1">
                     <span className="w-3 h-3 bg-blue-600 rounded-sm"></span>
-                    <span>Dots (Main pattern)</span>
+                    <span>도트 (메인 패턴)</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="w-3 h-3 border-2 border-blue-600 rounded-sm"></span>
-                    <span>Corner squares</span>
+                    <span>모서리 사각형</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                    <span>Corner dots</span>
+                    <span>모서리 도트</span>
                   </div>
                 </div>
               </div>
@@ -300,7 +300,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dots Color
+도트 색상
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -333,7 +333,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Corner Squares Color
+모서리 사각형 색상
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -366,7 +366,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Corner Dots Color
+모서리 도트 색상
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -397,7 +397,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                   </div>
                   <div className="flex items-center justify-between mt-1">
                     <p className="text-xs text-gray-500">
-                      Color of the small dots inside the corner squares
+모서리 사각형 안의 작은 도트 색상
                     </p>
                     <div className="flex items-center space-x-1 text-xs text-gray-400">
                       <span>●</span>
@@ -409,7 +409,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Background Color
+배경 색상
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -441,7 +441,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
               {/* Gradient Options */}
               <div className="space-y-4">
-                <h4 className="text-md font-semibold text-gray-800 border-t pt-4">Gradient Options</h4>
+                <h4 className="text-md font-semibold text-gray-800 border-t pt-4">그라데이션 옵션</h4>
                 
                 <label className="flex items-center space-x-2">
                   <input
@@ -475,7 +475,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     }}
                     className="rounded"
                   />
-                  <span className="text-sm font-medium text-gray-700">Use Gradient for Dots</span>
+                  <span className="text-sm font-medium text-gray-700">도트에 그라데이션 사용</span>
                 </label>
 
                 <label className="flex items-center space-x-2">
@@ -510,7 +510,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     }}
                     className="rounded"
                   />
-                  <span className="text-sm font-medium text-gray-700">Use Gradient for Corner Squares</span>
+                  <span className="text-sm font-medium text-gray-700">모서리 사각형에 그라데이션 사용</span>
                 </label>
 
                 <label className="flex items-center space-x-2">
@@ -544,14 +544,14 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     }}
                     className="rounded"
                   />
-                  <span className="text-sm font-medium text-gray-700">Use Gradient for Corner Dots</span>
+                  <span className="text-sm font-medium text-gray-700">모서리 도트에 그라데이션 사용</span>
                 </label>
 
                 {options.dotsOptions?.gradient && (
                   <div className="space-y-3 pl-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Gradient Type
+그라데이션 유형
                       </label>
                       <select
                         value={options.dotsOptions.gradient.type || 'linear'}
@@ -566,15 +566,15 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                         })}
                         className="w-full p-2 border border-gray-300 rounded-md"
                       >
-                        <option value="linear">Linear</option>
-                        <option value="radial">Radial</option>
+                        <option value="linear">선형</option>
+                        <option value="radial">원형</option>
                       </select>
                     </div>
 
                     {options.dotsOptions.gradient.type === 'linear' && (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Rotation (degrees)
+회전 (도)
                         </label>
                         <input
                           type="range"
@@ -599,7 +599,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Start Color
+시작 색상
                         </label>
                         <input
                           type="color"
@@ -622,7 +622,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          End Color
+끝 색상
                         </label>
                         <input
                           type="color"
@@ -653,11 +653,11 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
           {/* Logo Tab */}
           {activeTab === 'logo' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Logo & Image</h3>
+              <h3 className="text-lg font-semibold">로고 및 이미지</h3>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Upload Logo
+로고 업로드
                 </label>
                 <input
                   type="file"
@@ -666,7 +666,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Recommended: Square image, PNG with transparent background
+권장사항: 정사각형 이미지, 투명 배경의 PNG
                 </p>
               </div>
 
@@ -675,7 +675,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Logo Size
+로고 크기
                       </label>
                       <input
                         type="range"
@@ -692,13 +692,13 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                         className="w-full"
                       />
                       <span className="text-sm text-gray-500">
-                        {Math.round((options.imageOptions?.imageSize || 0.4) * 100)}% of QR size
+QR 크기의 {Math.round((options.imageOptions?.imageSize || 0.4) * 100)}%
                       </span>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Logo Margin
+로고 여백
                       </label>
                       <input
                         type="range"
@@ -730,7 +730,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                         })}
                         className="rounded"
                       />
-                      <span className="text-sm font-medium text-gray-700">Hide dots behind logo</span>
+                      <span className="text-sm font-medium text-gray-700">로고 뒤 도트 숨기기</span>
                     </label>
                   </div>
 
@@ -741,7 +741,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     })}
                     className="text-red-600 hover:text-red-800 text-sm"
                   >
-                    Remove Logo
+로고 제거
                   </button>
                 </div>
               )}
@@ -751,12 +751,12 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
           {/* Advanced Tab */}
           {activeTab === 'advanced' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Advanced Settings</h3>
+              <h3 className="text-lg font-semibold">고급 설정</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Size
+크기
                   </label>
                   <input
                     type="range"
@@ -771,7 +771,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Margin
+여백
                   </label>
                   <input
                     type="range"
@@ -787,7 +787,7 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Error Correction Level
+오류 정정 수준
                 </label>
                 <select
                   value={options.qrOptions?.errorCorrectionLevel || 'M'}
@@ -799,20 +799,20 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                   })}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="L">Low (7%)</option>
-                  <option value="M">Medium (15%)</option>
-                  <option value="Q">Quartile (25%)</option>
-                  <option value="H">High (30%)</option>
+                  <option value="L">낮음 (7%)</option>
+                  <option value="M">보통 (15%)</option>
+                  <option value="Q">분위수 (25%)</option>
+                  <option value="H">높음 (30%)</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  Higher levels allow for more damage but create denser QR codes
+높은 수준은 더 많은 손상을 허용하지만 더 조밀한 QR 코드를 생성합니다
                 </p>
               </div>
 
               {/* Output Format */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Output Format
+출력 형식
                 </label>
                 <select
                   value={options.format || 'png'}
