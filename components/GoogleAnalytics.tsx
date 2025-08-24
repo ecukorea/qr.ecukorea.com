@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { GA_MEASUREMENT_ID, pageview } from '../lib/gtag'
 import Script from 'next/script'
 
-export default function GoogleAnalytics() {
+function GoogleAnalyticsTracking() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -15,8 +15,16 @@ export default function GoogleAnalytics() {
     }
   }, [pathname, searchParams])
 
+  return null
+}
+
+export default function GoogleAnalytics() {
+
   return (
     <>
+      <Suspense fallback={null}>
+        <GoogleAnalyticsTracking />
+      </Suspense>
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
