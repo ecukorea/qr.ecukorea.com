@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { SimpleQRGenerator, SimpleQROptions } from './SimpleQRGenerator';
+import { event } from '../lib/gtag';
 
 interface SimpleQRStylerProps {
   data: string;
@@ -112,6 +113,13 @@ export default function SimpleQRStyler({ data, onQRGenerated }: SimpleQRStylerPr
               href={qrDataUrl}
               download="qr-code.png"
               className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                event({
+                  action: 'download',
+                  category: 'QR Code',
+                  label: 'Simple QR Code Download'
+                });
+              }}
             >
               Download QR Code
             </a>
@@ -182,6 +190,13 @@ export default function SimpleQRStyler({ data, onQRGenerated }: SimpleQRStylerPr
               <div className="flex justify-center">
                 <button
                   onClick={() => {
+                    // Track random color generation
+                    event({
+                      action: 'generate_random_colors',
+                      category: 'QR Code',
+                      label: 'Simple Random Colors'
+                    });
+
                     // Generate random colors
                     const generateRandomColor = () => {
                       const letters = '0123456789ABCDEF';
