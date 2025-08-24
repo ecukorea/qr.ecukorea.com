@@ -178,6 +178,42 @@ export default function SimpleQRStyler({ data, onQRGenerated }: SimpleQRStylerPr
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Color Customization</h3>
               
+              {/* Random Color Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    // Generate random colors
+                    const generateRandomColor = () => {
+                      const letters = '0123456789ABCDEF';
+                      let color = '#';
+                      for (let i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                      }
+                      return color;
+                    };
+
+                    const randomColors = {
+                      dark: generateRandomColor(),
+                      light: generateRandomColor()
+                    };
+
+                    // Apply random colors
+                    updateOptions({
+                      color: {
+                        dark: randomColors.dark,
+                        light: randomColors.light
+                      }
+                    });
+                  }}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm-6-6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0-6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm6 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm6 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0 6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0 6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1z"/>
+                  </svg>
+                  <span className="font-medium">Random Color Combo</span>
+                </button>
+              </div>
+              
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

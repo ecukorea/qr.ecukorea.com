@@ -296,6 +296,69 @@ QR 코드 다운로드
                   </div>
                 </div>
               </div>
+
+              {/* Random Color Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    // Generate random colors
+                    const generateRandomColor = () => {
+                      const letters = '0123456789ABCDEF';
+                      let color = '#';
+                      for (let i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                      }
+                      return color;
+                    };
+
+                    // Generate random gradient
+                    const generateRandomGradient = (currentType = 'linear') => {
+                      const types = ['linear', 'radial'];
+                      const type = types[Math.floor(Math.random() * types.length)];
+                      const rotation = Math.floor(Math.random() * 360);
+                      
+                      return {
+                        type: type as 'linear' | 'radial',
+                        rotation: type === 'linear' ? rotation : undefined,
+                        colorStops: [
+                          { offset: 0, color: generateRandomColor() },
+                          { offset: 1, color: generateRandomColor() }
+                        ]
+                      };
+                    };
+
+                    // Check current gradient states and apply appropriate random colors/gradients
+                    const newDotsOptions = options.dotsOptions?.gradient 
+                      ? { ...options.dotsOptions, color: undefined, gradient: generateRandomGradient() }
+                      : { ...options.dotsOptions, color: generateRandomColor(), gradient: undefined };
+
+                    const newCornersSquareOptions = options.cornersSquareOptions?.gradient
+                      ? { ...options.cornersSquareOptions, color: undefined, gradient: generateRandomGradient() }
+                      : { ...options.cornersSquareOptions, color: generateRandomColor(), gradient: undefined };
+
+                    const newCornersDotOptions = options.cornersDotOptions?.gradient
+                      ? { ...options.cornersDotOptions, color: undefined, gradient: generateRandomGradient() }
+                      : { ...options.cornersDotOptions, color: generateRandomColor(), gradient: undefined };
+
+                    // Apply random colors/gradients based on current state
+                    updateOptions({
+                      dotsOptions: newDotsOptions,
+                      cornersSquareOptions: newCornersSquareOptions,
+                      cornersDotOptions: newCornersDotOptions,
+                      backgroundOptions: {
+                        ...options.backgroundOptions,
+                        color: generateRandomColor()
+                      }
+                    });
+                  }}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm-6-6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0-6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm6 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm6 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0 6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm0 6c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1z"/>
+                  </svg>
+                  <span className="font-medium">랜덤 색상/그라데이션</span>
+                </button>
+              </div>
               
               {/* Dots Color and Gradient Options */}
               <div className="space-y-6">
