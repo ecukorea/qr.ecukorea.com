@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { EnhancedQRGenerator, EnhancedQROptions } from '../lib/enhanced-qr-generator';
 import { event } from '../lib/gtag';
+import LockIcon from './LockIcon';
 
 interface QRStylerProps {
   data: string;
@@ -18,6 +19,14 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<'style' | 'colors' | 'logo' | 'advanced'>('style');
+  
+  // Lock states for random color protection
+  const [lockedComponents, setLockedComponents] = useState({
+    dots: false,
+    cornerSquares: false,
+    cornerDots: false,
+    background: false
+  });
   
   // QR Options State
   const [options, setOptions] = useState<EnhancedQROptions>({
@@ -342,28 +351,35 @@ QR 코드 다운로드
                       };
                     };
 
-                    // Check current gradient states and apply appropriate random colors/gradients
-                    const newDotsOptions = options.dotsOptions?.gradient 
-                      ? { ...options.dotsOptions, color: undefined, gradient: generateRandomGradient() }
-                      : { ...options.dotsOptions, color: generateRandomColor(), gradient: undefined };
+                    // Check current gradient states and apply appropriate random colors/gradients (respecting locks)
+                    const newDotsOptions = lockedComponents.dots 
+                      ? options.dotsOptions
+                      : options.dotsOptions?.gradient 
+                        ? { ...options.dotsOptions, color: undefined, gradient: generateRandomGradient() }
+                        : { ...options.dotsOptions, color: generateRandomColor(), gradient: undefined };
 
-                    const newCornersSquareOptions = options.cornersSquareOptions?.gradient
-                      ? { ...options.cornersSquareOptions, color: undefined, gradient: generateRandomGradient() }
-                      : { ...options.cornersSquareOptions, color: generateRandomColor(), gradient: undefined };
+                    const newCornersSquareOptions = lockedComponents.cornerSquares
+                      ? options.cornersSquareOptions
+                      : options.cornersSquareOptions?.gradient
+                        ? { ...options.cornersSquareOptions, color: undefined, gradient: generateRandomGradient() }
+                        : { ...options.cornersSquareOptions, color: generateRandomColor(), gradient: undefined };
 
-                    const newCornersDotOptions = options.cornersDotOptions?.gradient
-                      ? { ...options.cornersDotOptions, color: undefined, gradient: generateRandomGradient() }
-                      : { ...options.cornersDotOptions, color: generateRandomColor(), gradient: undefined };
+                    const newCornersDotOptions = lockedComponents.cornerDots
+                      ? options.cornersDotOptions
+                      : options.cornersDotOptions?.gradient
+                        ? { ...options.cornersDotOptions, color: undefined, gradient: generateRandomGradient() }
+                        : { ...options.cornersDotOptions, color: generateRandomColor(), gradient: undefined };
 
-                    // Apply random colors/gradients based on current state
+                    const newBackgroundOptions = lockedComponents.background
+                      ? options.backgroundOptions
+                      : { ...options.backgroundOptions, color: generateRandomColor() };
+
+                    // Apply random colors/gradients based on current state and lock status
                     updateOptions({
                       dotsOptions: newDotsOptions,
                       cornersSquareOptions: newCornersSquareOptions,
                       cornersDotOptions: newCornersDotOptions,
-                      backgroundOptions: {
-                        ...options.backgroundOptions,
-                        color: generateRandomColor()
-                      }
+                      backgroundOptions: newBackgroundOptions
                     });
                   }}
                   className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
@@ -378,9 +394,22 @@ QR 코드 다운로드
               {/* Dots Color and Gradient Options */}
               <div className="space-y-6">
                 <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
-                  <h4 className="text-sm font-semibold text-blue-800 mb-3 flex items-center">
-                    <span className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></span>
-                    도트 색상 및 그라데이션
+                  <h4 className="text-sm font-semibold text-blue-800 mb-3 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></span>
+                      도트 색상 및 그라데이션
+                    </div>
+                    <button
+                      onClick={() => setLockedComponents(prev => ({ ...prev, dots: !prev.dots }))}
+                      className={`p-1 rounded transition-colors ${
+                        lockedComponents.dots 
+                          ? 'text-yellow-600 hover:text-yellow-700' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                      title={lockedComponents.dots ? '잠금 해제' : '잠금'}
+                    >
+                      <LockIcon isLocked={lockedComponents.dots} />
+                    </button>
                   </h4>
                   
                   {/* Dots Solid Color */}
@@ -549,9 +578,22 @@ QR 코드 다운로드
 
                 {/* Corner Squares Color and Gradient Options */}
                 <div className="p-4 border border-green-200 rounded-lg bg-green-50">
-                  <h4 className="text-sm font-semibold text-green-800 mb-3 flex items-center">
-                    <span className="w-3 h-3 border-2 border-green-600 rounded-sm mr-2"></span>
-                    모서리 사각형 색상 및 그라데이션
+                  <h4 className="text-sm font-semibold text-green-800 mb-3 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="w-3 h-3 border-2 border-green-600 rounded-sm mr-2"></span>
+                      모서리 사각형 색상 및 그라데이션
+                    </div>
+                    <button
+                      onClick={() => setLockedComponents(prev => ({ ...prev, cornerSquares: !prev.cornerSquares }))}
+                      className={`p-1 rounded transition-colors ${
+                        lockedComponents.cornerSquares 
+                          ? 'text-yellow-600 hover:text-yellow-700' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                      title={lockedComponents.cornerSquares ? '잠금 해제' : '잠금'}
+                    >
+                      <LockIcon isLocked={lockedComponents.cornerSquares} />
+                    </button>
                   </h4>
                   
                   {/* Corner Squares Solid Color */}
@@ -720,9 +762,22 @@ QR 코드 다운로드
 
                 {/* Corner Dots Color and Gradient Options */}
                 <div className="p-4 border border-orange-200 rounded-lg bg-orange-50">
-                  <h4 className="text-sm font-semibold text-orange-800 mb-3 flex items-center">
-                    <span className="w-2 h-2 bg-orange-600 rounded-full mr-2"></span>
-                    모서리 도트 색상 및 그라데이션
+                  <h4 className="text-sm font-semibold text-orange-800 mb-3 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="w-2 h-2 bg-orange-600 rounded-full mr-2"></span>
+                      모서리 도트 색상 및 그라데이션
+                    </div>
+                    <button
+                      onClick={() => setLockedComponents(prev => ({ ...prev, cornerDots: !prev.cornerDots }))}
+                      className={`p-1 rounded transition-colors ${
+                        lockedComponents.cornerDots 
+                          ? 'text-yellow-600 hover:text-yellow-700' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                      title={lockedComponents.cornerDots ? '잠금 해제' : '잠금'}
+                    >
+                      <LockIcon isLocked={lockedComponents.cornerDots} />
+                    </button>
                   </h4>
                   <p className="text-xs text-orange-700 mb-3 flex items-center">
                     모서리 사각형 안의 작은 도트 색상
@@ -894,7 +949,20 @@ QR 코드 다운로드
 
                 {/* Background Color Options */}
                 <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-3">배경 색상</h4>
+                  <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center justify-between">
+                    <span>배경 색상</span>
+                    <button
+                      onClick={() => setLockedComponents(prev => ({ ...prev, background: !prev.background }))}
+                      className={`p-1 rounded transition-colors ${
+                        lockedComponents.background 
+                          ? 'text-yellow-600 hover:text-yellow-700' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                      title={lockedComponents.background ? '잠금 해제' : '잠금'}
+                    >
+                      <LockIcon isLocked={lockedComponents.background} />
+                    </button>
+                  </h4>
                   
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2">
