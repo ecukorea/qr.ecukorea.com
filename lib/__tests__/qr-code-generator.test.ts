@@ -37,6 +37,22 @@ describe('QRCodeGenerator', () => {
       });
     });
 
+    it('should use cached QR code when available', async () => {
+      const testUrl = 'https://example.com/abc123';
+      const expectedDataUrl = 'data:image/png;base64,mockQRCode';
+      
+      mockToDataURL.mockResolvedValue(expectedDataUrl);
+
+      // First call should generate
+      const result1 = await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(1);
+
+      // Second call should use cache
+      const result2 = await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(1);
+      expect(result2).toBe(result1);
+    });
+
     it('should use custom options when provided', async () => {
       const testUrl = 'https://example.com/abc123';
       const customOptions = {
@@ -268,6 +284,84 @@ describe('QRCodeGenerator', () => {
       // Verify the URL passed to QRCode library includes protocol and domain
       const calledUrl = mockToDataURL.mock.calls[0][0];
       expect(calledUrl).toMatch(/^https?:\/\/.+/);
+    });
+  });
+
+  describe('caching functionality', () => {
+    it('should cache QR codes with different options separately', async () => {
+      const testUrl = 'https://example.com/abc123';
+      mockToDataURL.mockResolvedValue('data:image/png;base64,mockQRCode');
+
+      // Generate with default options
+      await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(1);
+
+      // Generate with different options should create new QR code
+      await generator.generateQR(testUrl, { width: 512 });
+      expect(mockToDataURL).toHaveBeenCalledTimes(2);
+
+      // Generate with default options again should use cache
+      await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(2);
+    });
+
+    it('should clear cache when requested', async () => {
+      const testUrl = 'https://example.com/abc123';
+      mockToDataURL.mockResolvedValue('data:image/png;base64,mockQRCode');
+
+      // Generate and cache
+      await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(1);
+
+      // Clear cache
+      generator.clearCache();
+
+      // Should generate again
+      await generator.generateQR(testUrl);
+      expect(mockToDataURL).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide cache statistics', async () => {
+      const stats = generator.getCacheStats();
+      expect(stats.size).toBe(0);
+      expect(stats.maxSize).toBe(100);
+
+      const testUrl = 'https://example.com/abc123';
+      mockToDataURL.mockResolvedValue('data:image/png;base64,mockQRCode');
+
+      await generator.generateQR(testUrl);
+
+      const newStats = generator.getCacheStats();
+      expect(newStats.size).toBe(1);
+    });
+
+    it('should preload QR codes for multiple URLs', async () => {
+      const urls = [
+        'https://example.com/1',
+        'https://example.com/2',
+        'https://example.com/3'
+      ];
+      
+      mockToDataURL.mockResolvedValue('data:image/png;base64,mockQRCode');
+
+      await generator.preloadQRCodes(urls);
+
+      expect(mockToDataURL).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle preload errors gracefully', async () => {
+      const urls = ['https://example.com/1', 'invalid-url'];
+      
+      mockToDataURL
+        .mockResolvedValueOnce('data:image/png;base64,mockQRCode')
+        .mockRejectedValueOnce(new Error('Invalid URL'));
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      await generator.preloadQRCodes(urls);
+
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
   });
 });

@@ -3,6 +3,8 @@
  * Implements requirements 3.1, 3.2, 3.4
  */
 
+import { performanceMonitor } from './performance-monitor';
+
 export interface URLRecord {
   id: string;
   to: string;
@@ -45,37 +47,103 @@ export class SheetsAuthError extends SheetsServiceError {
   }
 }
 
+export interface CacheMetadata {
+  data: URLRecord[];
+  timestamp: number;
+  etag?: string;
+  lastModified?: string;
+}
+
 export class SheetsDataService {
   private readonly SHEET_ID = '1WPO2Hs53oFtPExN3kZLFfJtsRclE1ZA3uat59elqXwg';
   private readonly CSV_URL: string;
-  private cachedData: URLRecord[] | null = null;
-  private lastFetchTime: number = 0;
+  private cache: CacheMetadata | null = null;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  private readonly STALE_WHILE_REVALIDATE_DURATION = 10 * 60 * 1000; // 10 minutes
+  private readonly STORAGE_KEY = 'sheets_data_cache';
+  private pendingFetch: Promise<URLRecord[]> | null = null;
 
   constructor() {
     this.CSV_URL = `https://docs.google.com/spreadsheets/d/${this.SHEET_ID}/export?format=csv`;
+    this.loadCacheFromStorage();
   }
 
   /**
    * Fetches sheet data from Google Sheets CSV export
-   * Implements caching to reduce API calls
+   * Implements advanced caching with stale-while-revalidate strategy
    * @returns Promise<URLRecord[]> Array of URL records
    * @throws Error when fetch fails or data is invalid
    */
   async fetchSheetData(): Promise<URLRecord[]> {
-    // Return cached data if still valid
     const now = Date.now();
-    if (this.cachedData && (now - this.lastFetchTime) < this.CACHE_DURATION) {
-      return this.cachedData;
+    
+    // Return fresh cached data if available
+    if (this.cache && (now - this.cache.timestamp) < this.CACHE_DURATION) {
+      performanceMonitor.recordSheetsRequest(true);
+      return this.cache.data;
     }
-
+    
+    // If we have a pending fetch, return it to avoid duplicate requests
+    if (this.pendingFetch) {
+      return this.pendingFetch;
+    }
+    
+    // Stale-while-revalidate: return stale data immediately, fetch fresh data in background
+    if (this.cache && (now - this.cache.timestamp) < this.STALE_WHILE_REVALIDATE_DURATION) {
+      // Return stale data immediately
+      const staleData = this.cache.data;
+      
+      // Fetch fresh data in background (don't await)
+      this.fetchFreshData().catch(error => {
+        console.warn('Background refresh failed:', error);
+      });
+      
+      performanceMonitor.recordSheetsRequest(true);
+      return staleData;
+    }
+    
+    // No cache or cache is too old, fetch fresh data
+    this.pendingFetch = this.fetchFreshData();
+    
     try {
+      const result = await this.pendingFetch;
+      performanceMonitor.recordSheetsRequest(false);
+      return result;
+    } finally {
+      this.pendingFetch = null;
+    }
+  }
+
+  /**
+   * Fetches fresh data from Google Sheets with conditional requests
+   * @private
+   */
+  private async fetchFreshData(): Promise<URLRecord[]> {
+    try {
+      const headers: Record<string, string> = {
+        'Accept': 'text/csv',
+      };
+      
+      // Add conditional request headers if we have cache metadata
+      if (this.cache?.etag) {
+        headers['If-None-Match'] = this.cache.etag;
+      }
+      if (this.cache?.lastModified) {
+        headers['If-Modified-Since'] = this.cache.lastModified;
+      }
+
       const response = await fetch(this.CSV_URL, {
         method: 'GET',
-        headers: {
-          'Accept': 'text/csv',
-        },
+        headers,
       });
+
+      // Handle 304 Not Modified - data hasn't changed
+      if (response.status === 304 && this.cache) {
+        // Update timestamp but keep existing data
+        this.cache.timestamp = Date.now();
+        this.saveCacheToStorage();
+        return this.cache.data;
+      }
 
       if (!response.ok) {
         // Handle specific HTTP status codes
@@ -98,16 +166,23 @@ export class SheetsDataService {
 
       const parsedData = this.parseCSVData(csvText);
       
-      // Update cache
-      this.cachedData = parsedData;
-      this.lastFetchTime = now;
+      // Update cache with new data and metadata
+      this.cache = {
+        data: parsedData,
+        timestamp: Date.now(),
+        etag: response.headers.get('etag') || undefined,
+        lastModified: response.headers.get('last-modified') || undefined,
+      };
+      
+      // Persist cache to localStorage
+      this.saveCacheToStorage();
       
       return parsedData;
     } catch (error) {
       // If we have cached data and fetch fails, return cached data for network errors
-      if (this.cachedData && (error instanceof SheetsNetworkError || error instanceof SheetsServiceError)) {
+      if (this.cache && (error instanceof SheetsNetworkError || error instanceof SheetsServiceError)) {
         console.warn('Failed to fetch fresh data, returning cached data:', error);
-        return this.cachedData;
+        return this.cache.data;
       }
       
       // Re-throw custom errors as-is
@@ -352,10 +427,99 @@ export class SheetsDataService {
   }
 
   /**
+   * Loads cache from localStorage if available
+   * @private
+   */
+  private loadCacheFromStorage(): void {
+    try {
+      if (typeof localStorage === 'undefined') return;
+      
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as CacheMetadata;
+        // Only use stored cache if it's not too old
+        const now = Date.now();
+        if ((now - parsed.timestamp) < this.STALE_WHILE_REVALIDATE_DURATION) {
+          this.cache = parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load cache from storage:', error);
+    }
+  }
+
+  /**
+   * Saves cache to localStorage
+   * @private
+   */
+  private saveCacheToStorage(): void {
+    try {
+      if (typeof localStorage === 'undefined' || !this.cache) return;
+      
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cache));
+    } catch (error) {
+      console.warn('Failed to save cache to storage:', error);
+    }
+  }
+
+  /**
    * Clears the cached data (useful for testing or forcing refresh)
    */
   clearCache(): void {
-    this.cachedData = null;
-    this.lastFetchTime = 0;
+    this.cache = null;
+    this.pendingFetch = null;
+    
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
+    } catch (error) {
+      console.warn('Failed to clear cache from storage:', error);
+    }
+  }
+
+  /**
+   * Forces a refresh of the cache by fetching fresh data
+   * @returns Promise<URLRecord[]> Fresh data from the server
+   */
+  async refreshCache(): Promise<URLRecord[]> {
+    this.clearCache();
+    return this.fetchSheetData();
+  }
+
+  /**
+   * Gets cache status information
+   * @returns Object with cache status details
+   */
+  getCacheStatus(): {
+    hasCachedData: boolean;
+    cacheAge: number;
+    isStale: boolean;
+    isExpired: boolean;
+  } {
+    const now = Date.now();
+    const hasCachedData = this.cache !== null;
+    const cacheAge = this.cache ? now - this.cache.timestamp : 0;
+    const isStale = this.cache ? cacheAge > this.CACHE_DURATION : true;
+    const isExpired = this.cache ? cacheAge > this.STALE_WHILE_REVALIDATE_DURATION : true;
+
+    return {
+      hasCachedData,
+      cacheAge,
+      isStale,
+      isExpired,
+    };
+  }
+
+  /**
+   * Preloads data into cache (useful for performance optimization)
+   * @returns Promise<void>
+   */
+  async preloadCache(): Promise<void> {
+    try {
+      await this.fetchSheetData();
+    } catch (error) {
+      console.warn('Cache preload failed:', error);
+    }
   }
 }

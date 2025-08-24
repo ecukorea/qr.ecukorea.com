@@ -1,33 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { QRCodeGenerator, QRCodeGenerationError } from '../lib/qr-code-generator'
 import { URLValidator } from '../lib/url-validator'
 import { SheetsServiceError, SheetsNetworkError, SheetsDataError, SheetsAuthError } from '../lib/sheets-data-service'
 import ECULogo from '../components/ECULogo'
+import QRStyler from '../components/QRStyler'
 
 export default function Home() {
-    const [url, setUrl] = useState('')
-    const [description, setDescription] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const [result, setResult] = useState<{
-        qrCode: string
-        originalUrl: string
-    } | null>(null)
-    const [error, setError] = useState('')
+    const [url, setUrl] = useState('https://example.com')
     const [validationMessage, setValidationMessage] = useState('')
     const [copySuccess, setCopySuccess] = useState('')
+    const [generatedQR, setGeneratedQR] = useState<string>('')
+    const [showStyler, setShowStyler] = useState(false)
 
     // Initialize services
-    const qrGenerator = new QRCodeGenerator()
     const urlValidator = new URLValidator()
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
         // Clear previous messages
         setValidationMessage('')
-        setError('')
         setCopySuccess('')
 
         // Validate URL using URLValidator
@@ -38,54 +31,21 @@ export default function Home() {
             return
         }
 
-        setIsLoading(true)
-
-        try {
-            // Generate QR code directly from the user's URL
-            // Note: We're not creating shortened URLs yet since Google Sheets storage isn't implemented
-            const qrCodeDataUrl = await qrGenerator.generateQR(validation.normalizedUrl, {
-                width: 256,
-                margin: 2,
-                errorCorrectionLevel: 'M'
-            })
-
-            // Set the result
-            setResult({
-                qrCode: `<img src="${qrCodeDataUrl}" alt="QR Code" style="max-width: 100%; height: auto;" />`,
-                originalUrl: validation.normalizedUrl
-            })
-
-        } catch (error) {
-            console.error('QR generation error:', error)
-            
-            // Provide user-friendly error messages based on error type
-            if (error instanceof QRCodeGenerationError) {
-                setError('QR 코드 생성에 실패했습니다. 다시 시도해 주세요.')
-            } else if (error instanceof SheetsAuthError) {
-                setError('서비스 접근 권한 문제가 발생했습니다. 관리자에게 문의해 주세요.')
-            } else if (error instanceof SheetsNetworkError) {
-                setError('인터넷 연결을 확인하고 다시 시도해 주세요.')
-            } else if (error instanceof SheetsDataError) {
-                setError('데이터 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.')
-            } else if (error instanceof SheetsServiceError) {
-                setError('서비스에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.')
-            } else if (error instanceof Error && error.message.includes('network')) {
-                setError('네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인해 주세요.')
-            } else {
-                setError('QR 코드 생성 중 문제가 발생했습니다. 다시 시도해 주세요.')
-            }
-        } finally {
-            setIsLoading(false)
-        }
+        // Update URL and show styler
+        setUrl(validation.normalizedUrl)
+        setShowStyler(true)
     }
 
     const handleReset = () => {
-        setUrl('')
-        setDescription('')
-        setResult(null)
-        setError('')
+        setUrl('https://example.com')
+        setGeneratedQR('')
         setValidationMessage('')
         setCopySuccess('')
+        setShowStyler(false)
+    }
+
+    const handleQRGenerated = (dataUrl: string) => {
+        setGeneratedQR(dataUrl)
     }
 
     const handleCopyToClipboard = async (text: string) => {
@@ -102,7 +62,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-2xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <header className="text-center mb-8">
                     <div className="mb-4">
                         <ECULogo size="md" className="mx-auto mb-4" />
@@ -111,15 +71,16 @@ export default function Home() {
                         </h2>
                     </div>
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        QR Code Generator
+                        QR Code Styler
                     </h1>
-                    <p className="text-gray-600">
-                        Generate QR codes for your URLs instantly
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Create beautiful, customized QR codes with advanced styling options. 
+                        Choose from multiple dot styles, colors, gradients, and add your logo.
                     </p>
                 </header>
 
-                <main className="bg-white rounded-lg shadow-md p-6">
-                    {!result && !error && (
+                {!showStyler ? (
+                    <main className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
@@ -139,82 +100,78 @@ export default function Home() {
                                 )}
                             </div>
 
-                            <div>
-                                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Description (optional):
-                                </label>
-                                <input
-                                    type="text"
-                                    id="description"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Optional description for your link"
-                                    className="form-input"
-                                />
-                            </div>
-
                             <button
                                 type="submit"
-                                disabled={isLoading}
-                                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full btn-primary"
                             >
-                                {isLoading ? 'Generating QR Code...' : 'Generate QR Code'}
+                                Create Styled QR Code
                             </button>
                         </form>
-                    )}
 
-                    {isLoading && (
-                        <div className="text-center py-8">
-                            <div className="spinner mx-auto mb-4"></div>
-                            <p className="text-gray-600">Generating QR code...</p>
-                            <p className="text-sm text-gray-500 mt-2">This may take a few seconds</p>
+                        {/* Features Preview */}
+                        <div className="mt-8 pt-6 border-t border-gray-200">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">✨ Advanced QR Code Features</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="text-2xl mb-1">⚫</div>
+                                    <div className="text-xs text-gray-600">6 Dot Styles</div>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="text-2xl mb-1">🌈</div>
+                                    <div className="text-xs text-gray-600">Gradients</div>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="text-2xl mb-1">🏢</div>
+                                    <div className="text-xs text-gray-600">Logo Support</div>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="text-2xl mb-1">🎨</div>
+                                    <div className="text-xs text-gray-600">8 Presets</div>
+                                </div>
+                            </div>
                         </div>
-                    )}
+                    </main>
+                ) : (
+                    <div>
+                        {/* Back Button */}
+                        <div className="mb-6">
+                            <button
+                                onClick={handleReset}
+                                className="flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Back to URL Input
+                            </button>
+                        </div>
 
-                    {result && (
-                        <div className="text-center space-y-6">
-                            <h2 className="text-2xl font-bold text-gray-900">Your QR Code</h2>
-                            <div className="bg-gray-100 p-4 rounded-lg">
-                                <div dangerouslySetInnerHTML={{ __html: result.qrCode }} />
-                            </div>
-                            <div className="space-y-2 text-left bg-gray-50 p-4 rounded-lg">
-                                <p><strong>URL:</strong> <a href={result.originalUrl} className="text-primary-600 hover:text-primary-700 underline break-all">{result.originalUrl}</a></p>
-                                {description && <p><strong>Description:</strong> <span className="text-gray-700">{description}</span></p>}
-                                <p className="text-sm text-gray-500 italic">Note: URL shortening will be available once Google Sheets integration is complete.</p>
-                            </div>
-                            <div className="flex gap-3 justify-center">
+                        {/* URL Display */}
+                        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-700">Current URL:</p>
+                                    <p className="text-blue-600 truncate">{url}</p>
+                                </div>
                                 <button
-                                    onClick={() => handleCopyToClipboard(result.originalUrl)}
-                                    className="btn-primary"
+                                    onClick={() => handleCopyToClipboard(url)}
+                                    className="ml-4 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
                                 >
-                                    Copy URL
-                                </button>
-                                <button
-                                    onClick={handleReset}
-                                    className="btn-secondary"
-                                >
-                                    Generate Another
+                                    Copy
                                 </button>
                             </div>
                             {copySuccess && (
-                                <p className="text-sm text-green-600 font-medium">{copySuccess}</p>
+                                <p className="text-sm text-green-600 font-medium mt-2">{copySuccess}</p>
                             )}
                         </div>
-                    )}
 
-                    {error && (
-                        <div className="text-center space-y-4">
-                            <h2 className="text-2xl font-bold text-red-600">Error</h2>
-                            <p className="text-gray-700">{error}</p>
-                            <button
-                                onClick={handleReset}
-                                className="btn-secondary"
-                            >
-                                Try Again
-                            </button>
-                        </div>
-                    )}
-                </main>
+                        {/* QR Styler Component */}
+                        <QRStyler 
+                            data={url} 
+                            onQRGenerated={handleQRGenerated}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     )

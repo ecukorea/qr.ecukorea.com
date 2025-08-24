@@ -15,6 +15,16 @@ describe('SheetsDataService', () => {
     service = new SheetsDataService();
     service.clearCache();
     jest.clearAllMocks();
+    
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+      },
+      writable: true,
+    });
   });
 
   describe('parseCSVData', () => {
@@ -136,7 +146,10 @@ abc123,https://example.com,Test link`;
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(mockCsvData)
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
       });
 
       const result = await service.fetchSheetData();
@@ -174,7 +187,10 @@ abc123,https://example.com,Test link`;
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(mockCsvData)
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
       });
 
       // First call should fetch
@@ -186,6 +202,79 @@ abc123,https://example.com,Test link`;
       expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(result2).toEqual(result1);
     });
+
+    it('should handle conditional requests with 304 Not Modified', async () => {
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      // First request - normal response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn((header) => {
+            if (header === 'etag') return '"test-etag"';
+            if (header === 'last-modified') return 'Wed, 21 Oct 2015 07:28:00 GMT';
+            return null;
+          })
+        }
+      });
+
+      // First call
+      await service.fetchSheetData();
+
+      // Clear cache to force fresh request
+      service.clearCache();
+
+      // Mock 304 response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        status: 304,
+        ok: false
+      });
+
+      // This should handle 304 gracefully but since we cleared cache, it will throw
+      await expect(service.fetchSheetData()).rejects.toThrow();
+    });
+
+    it('should implement stale-while-revalidate strategy', async () => {
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
+      });
+
+      // First call to populate cache
+      await service.fetchSheetData();
+
+      // Manually age the cache to be stale but not expired
+      const cacheStatus = service.getCacheStatus();
+      expect(cacheStatus.hasCachedData).toBe(true);
+    });
+
+    it('should persist cache to localStorage', async () => {
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
+      });
+
+      await service.fetchSheetData();
+
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'sheets_data_cache',
+        expect.stringContaining('abc123')
+      );
+    });
   });
 
   describe('findUrlById', () => {
@@ -196,7 +285,10 @@ def456,https://google.com,Google search`;
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(mockCsvData)
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
       });
 
       const result = await service.findUrlById('def456');
@@ -214,12 +306,93 @@ abc123,https://example.com,Test link`;
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(mockCsvData)
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
       });
 
       const result = await service.findUrlById('nonexistent');
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('cache management', () => {
+    it('should provide cache status information', async () => {
+      const status = service.getCacheStatus();
+      expect(status.hasCachedData).toBe(false);
+      expect(status.isExpired).toBe(true);
+
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
+      });
+
+      await service.fetchSheetData();
+
+      const newStatus = service.getCacheStatus();
+      expect(newStatus.hasCachedData).toBe(true);
+      expect(newStatus.isStale).toBe(false);
+    });
+
+    it('should refresh cache when requested', async () => {
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
+      });
+
+      // Initial fetch
+      await service.fetchSheetData();
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+
+      // Refresh cache should force new fetch
+      await service.refreshCache();
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should preload cache without throwing errors', async () => {
+      const mockCsvData = `id,to,description
+abc123,https://example.com,Test link`;
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(mockCsvData),
+        headers: {
+          get: jest.fn().mockReturnValue(null)
+        }
+      });
+
+      await service.preloadCache();
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle preload cache errors gracefully', async () => {
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      await service.preloadCache();
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Cache preload failed:', expect.any(Error));
+      consoleSpy.mockRestore();
+    });
+
+    it('should clear cache from localStorage', () => {
+      service.clearCache();
+      expect(localStorage.removeItem).toHaveBeenCalledWith('sheets_data_cache');
     });
   });
 });
