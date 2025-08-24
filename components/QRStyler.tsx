@@ -663,7 +663,7 @@ QR 코드 다운로드
                   <button
                     onClick={() => {
                       updateOptions({
-                        image: '/ecu-logo.png',
+                        image: '/qr-logo.png',
                         imageOptions: {
                           hideBackgroundDots: true,
                           imageSize: 0.4,
@@ -673,7 +673,7 @@ QR 코드 다운로드
                     }}
                     className="flex items-center px-3 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-md hover:bg-purple-100 transition-colors"
                   >
-                    <img src="/ecu-logo.png" alt="ECU 로고" className="w-6 h-6 mr-2" />
+                    <img src="/qr-logo.png" alt="ECU 로고" className="w-6 h-6 mr-2" />
                     ECU 로고 사용하기
                   </button>
                 </div>
