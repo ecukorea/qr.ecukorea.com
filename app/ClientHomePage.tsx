@@ -222,7 +222,7 @@ export default function ClientHomePage({ initialSheetsData }: ClientHomePageProp
                                             {sheetUrls.map((item, index) => (
                                                 <button
                                                     key={index}
-                                                    onClick={() => handleSelectUrl(item.to)}
+                                                    onClick={() => handleSelectUrl(`${document.URL}${item.id}`)}
                                                     className="w-full p-2 text-left hover:bg-blue-50 transition-colors"
                                                 >
                                                     <div className="text-xs">
