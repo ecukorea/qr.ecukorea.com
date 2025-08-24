@@ -69,7 +69,7 @@ function parseCSV(csvText: string): UrlMapping[] {
       
       // Expect at least 3 columns: id, to, description, and optional title
       if (row.length >= 3) {
-        const [id, to, description, title] = row
+        const [id, to, title, description] = row
         
         // Validate required fields
         if (id && to && isValidQRId(id) && isValidURL(to)) {

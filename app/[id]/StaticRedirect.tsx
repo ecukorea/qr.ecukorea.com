@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { UrlMapping } from '../../lib/build-time-sheets'
 import ECULogo from '../../components/ECULogo'
+import { UrlMapping } from '../../lib/sheets-service';
 
 interface StaticRedirectProps {
   mapping: UrlMapping

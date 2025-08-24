@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '복음주의 학생연합 ECU - QR URL Shortener',
+  title: 'ECU - QR 생성기 / URL 단축기',
   description: 'Generate QR codes for your URLs instantly | 복음주의 학생연합 ECU',
   metadataBase: new URL('https://qr.ecukorea.com'),
 }
