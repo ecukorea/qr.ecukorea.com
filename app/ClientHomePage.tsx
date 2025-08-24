@@ -26,6 +26,7 @@ export default function ClientHomePage({ initialSheetsData }: ClientHomePageProp
         initialSheetsData.map(m => ({ id: m.id, to: m.to }))
     )
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
+    const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
 
     // Initialize services
     const urlValidator = new URLValidator()
@@ -67,14 +68,16 @@ export default function ClientHomePage({ initialSheetsData }: ClientHomePageProp
     const handleLoadUrlsFromSheets = async () => {
         setIsLoadingUrls(true)
         try {
-            // Fetch directly from Google Sheets without caching for client-side refresh
+            // Fetch directly from Google Sheets with cache-busting for client-side refresh
             const SHEET_ID = '1WPO2Hs53oFtPExN3kZLFfJtsRclE1ZA3uat59elqXwg'
-            const SHEETS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
+            const cacheBuster = `&t=${Date.now()}`
+            const SHEETS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv${cacheBuster}`
             
             const response = await fetch(SHEETS_URL, {
                 headers: {
                     'User-Agent': 'ECU-QR-Generator/1.0'
-                }
+                },
+                cache: 'no-cache' // Force fresh fetch
             })
             
             if (!response.ok) {
@@ -179,62 +182,88 @@ export default function ClientHomePage({ initialSheetsData }: ClientHomePageProp
                                     )}
                                 </div>
 
-                                {/* Buttons Row */}
-                                <div className="flex flex-col sm:flex-row gap-2">
+                                {/* Advanced: Google Sheets Integration */}
+                                <div className="pt-4 border-t border-gray-200">
                                     <button
-                                        onClick={handleLoadUrlsFromSheets}
-                                        disabled={isLoadingUrls}
-                                        className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-md hover:bg-green-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}
+                                        className="flex items-center justify-between w-full text-left"
                                     >
-                                        {isLoadingUrls ? (
-                                            <>
-                                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                로딩중...
-                                            </>
-                                        ) : (
-                                            '새로고침'
-                                        )}
+                                        <h4 className="text-sm font-semibold text-gray-900">🔧 구글 시트에 저장된 정보 사용하기</h4>
+                                        <svg 
+                                            className={`w-4 h-4 transition-transform ${isAdvancedExpanded ? 'transform rotate-180' : ''}`} 
+                                            fill="none" 
+                                            stroke="currentColor" 
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
                                     </button>
                                     
-                                    <a
-                                        href="https://docs.google.com/spreadsheets/d/1WPO2Hs53oFtPExN3kZLFfJtsRclE1ZA3uat59elqXwg/edit"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
-                                    >
-                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                        </svg>
-                                        Google Sheets로 이동하기
-                                    </a>
-                                </div>
-
-                                {/* URLs List */}
-                                {sheetUrls.length > 0 && (
-                                    <div className="mt-4 max-h-48 overflow-y-auto border border-gray-200 rounded-md">
-                                        <div className="p-2 bg-gray-50 border-b">
-                                            <p className="text-xs font-medium text-gray-700">클릭하여 선택하세요:</p>
-                                        </div>
-                                        <div className="divide-y divide-gray-100">
-                                            {sheetUrls.map((item, index) => (
+                                    {isAdvancedExpanded && (
+                                        <div className="mt-3 space-y-3">
+                                            <p className="text-xs text-gray-600">
+                                                Google Sheets에 저장된 URL 목록을 불러와서 선택할 수 있습니다.
+                                            </p>
+                                            
+                                            {/* Buttons Row */}
+                                            <div className="flex flex-col sm:flex-row gap-2">
                                                 <button
-                                                    key={index}
-                                                    onClick={() => handleSelectUrl(`${document.URL}${item.id}`)}
-                                                    className="w-full p-2 text-left hover:bg-blue-50 transition-colors"
+                                                    onClick={handleLoadUrlsFromSheets}
+                                                    disabled={isLoadingUrls}
+                                                    className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-md hover:bg-green-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <div className="text-xs">
-                                                        <span className="font-mono text-gray-600">id={item.id}</span>
-                                                        <br />
-                                                        <span className="text-blue-600 break-all">to={item.to}</span>
-                                                    </div>
+                                                    {isLoadingUrls ? (
+                                                        <>
+                                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            로딩중...
+                                                        </>
+                                                    ) : (
+                                                        '새로고침'
+                                                    )}
                                                 </button>
-                                            ))}
+                                                
+                                                <a
+                                                    href="https://docs.google.com/spreadsheets/d/1WPO2Hs53oFtPExN3kZLFfJtsRclE1ZA3uat59elqXwg/edit"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+                                                >
+                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                    </svg>
+                                                    Google Sheets로 이동하기
+                                                </a>
+                                            </div>
+
+                                            {/* URLs List */}
+                                            {sheetUrls.length > 0 && (
+                                                <div className="mt-3 max-h-48 overflow-y-auto border border-gray-200 rounded-md">
+                                                    <div className="p-2 bg-gray-50 border-b">
+                                                        <p className="text-xs font-medium text-gray-700">클릭하여 선택하세요:</p>
+                                                    </div>
+                                                    <div className="divide-y divide-gray-100">
+                                                        {sheetUrls.map((item, index) => (
+                                                            <button
+                                                                key={index}
+                                                                onClick={() => handleSelectUrl(item.to)}
+                                                                className="w-full p-2 text-left hover:bg-blue-50 transition-colors"
+                                                            >
+                                                                <div className="text-xs">
+                                                                    <span className="font-mono text-gray-600">id={item.id}</span>
+                                                                    <br />
+                                                                    <span className="text-blue-600 break-all">to={item.to}</span>
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
