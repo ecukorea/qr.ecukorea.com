@@ -36,16 +36,8 @@ export default function NotFound() {
             href="/"
             className="inline-block px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-200"
           >
-            새 단축 URL 만들기
+            이전 페이지로 돌아가기
           </Link>
-          <div>
-            <button
-              onClick={() => window.history.back()}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
-            >
-              이전 페이지로 돌아가기
-            </button>
-          </div>
         </div>
       </div>
     </div>

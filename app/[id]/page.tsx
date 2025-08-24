@@ -1,23 +1,7 @@
-import { fetchSheetsData, findMappingById } from '../../lib/build-time-sheets'
+import { fetchSheetsData, findMappingById } from '../../lib/sheets-service'
 import StaticRedirect from './StaticRedirect'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-
-// Generate static params for all QR codes from Google Sheets
-export async function generateStaticParams() {
-  try {
-    const mappings = await fetchSheetsData()
-    console.log(`🔧 Generating static params for ${mappings.length} QR codes`)
-    
-    return mappings.map((mapping) => ({
-      id: mapping.id
-    }))
-  } catch (error) {
-    console.error('❌ Error generating static params:', error)
-    // Return empty array to prevent build failure
-    return []
-  }
-}
 
 interface RedirectPageProps {
   params: Promise<{

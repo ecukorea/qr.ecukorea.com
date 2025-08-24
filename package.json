@@ -5,15 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:ssg": "node scripts/build-ssg.js",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "export": "next build",
-    "serve": "npx serve out",
     "cleanup": "node scripts/cleanup-lib.js",
-    "deploy": "npm run build:ssg"
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "next": "15.5.0",

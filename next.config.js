@@ -2,16 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Enable static export for GitHub Pages
-  output: 'export',
+  // Use standalone output for Lambda deployment
+  output: 'standalone',
   
-  // Disable image optimization for static export
+  // Enable image optimization for Lambda
   images: {
-    unoptimized: true
+    domains: [],
+    formats: ['image/webp'],
   },
-  
-  // Configure trailing slash for better static hosting compatibility
-  trailingSlash: true,
   
   // Skip build-time type checking (optional, for faster builds)
   typescript: {

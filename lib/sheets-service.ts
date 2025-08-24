@@ -1,7 +1,8 @@
 /**
- * Build-time Google Sheets data fetcher
- * Fetches QR URL mappings during static site generation
+ * Runtime Google Sheets data fetcher with caching
+ * Fetches QR URL mappings with server-side caching
  */
+import { unstable_cache } from 'next/cache'
 
 export interface UrlMapping {
   id: string
@@ -11,9 +12,9 @@ export interface UrlMapping {
 }
 
 /**
- * Fetches all URL mappings from Google Sheets at build time
+ * Fetches all URL mappings from Google Sheets (uncached)
  */
-export async function fetchSheetsData(): Promise<UrlMapping[]> {
+async function fetchSheetsDataUncached(): Promise<UrlMapping[]> {
   const SHEET_ID = '1WPO2Hs53oFtPExN3kZLFfJtsRclE1ZA3uat59elqXwg'
   const SHEETS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
   
@@ -23,7 +24,9 @@ export async function fetchSheetsData(): Promise<UrlMapping[]> {
     const response = await fetch(SHEETS_URL, {
       headers: {
         'User-Agent': 'ECU-QR-Generator/1.0'
-      }
+      },
+      // Add cache control for fetch
+      next: { revalidate: 300 } // Cache for 5 minutes
     })
     
     if (!response.ok) {
@@ -148,7 +151,16 @@ function isValidURL(url: string): boolean {
 }
 
 /**
- * Get URL mapping by ID (for build-time usage)
+ * Cached version of fetchSheetsData with 5-minute cache
+ */
+export const fetchSheetsData = unstable_cache(
+  fetchSheetsDataUncached,
+  ['sheets-data'], // cache key
+  { revalidate: 300 } // 5 minutes cache
+)
+
+/**
+ * Get URL mapping by ID
  */
 export function findMappingById(mappings: UrlMapping[], id: string): UrlMapping | null {
   return mappings.find(mapping => mapping.id === id) || null
