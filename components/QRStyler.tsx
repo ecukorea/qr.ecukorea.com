@@ -278,6 +278,25 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Color Customization</h3>
               
+              {/* Visual Guide */}
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">QR Code Parts Guide</h4>
+                <div className="grid grid-cols-3 gap-2 text-xs text-blue-700">
+                  <div className="flex items-center space-x-1">
+                    <span className="w-3 h-3 bg-blue-600 rounded-sm"></span>
+                    <span>Dots (Main pattern)</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span className="w-3 h-3 border-2 border-blue-600 rounded-sm"></span>
+                    <span>Corner squares</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                    <span>Corner dots</span>
+                  </div>
+                </div>
+              </div>
+              
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -347,6 +366,49 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Corner Dots Color
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={options.cornersDotOptions?.color || '#000000'}
+                      onChange={(e) => updateOptions({ 
+                        cornersDotOptions: { 
+                          ...options.cornersDotOptions, 
+                          color: e.target.value,
+                          gradient: undefined
+                        } 
+                      })}
+                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={options.cornersDotOptions?.color || '#000000'}
+                      onChange={(e) => updateOptions({ 
+                        cornersDotOptions: { 
+                          ...options.cornersDotOptions, 
+                          color: e.target.value,
+                          gradient: undefined
+                        } 
+                      })}
+                      className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                      placeholder="#000000"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-gray-500">
+                      Color of the small dots inside the corner squares
+                    </p>
+                    <div className="flex items-center space-x-1 text-xs text-gray-400">
+                      <span>●</span>
+                      <span>in</span>
+                      <span>⬜</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Background Color
                   </label>
                   <div className="flex items-center space-x-2">
@@ -378,7 +440,9 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
               </div>
 
               {/* Gradient Options */}
-              <div className="space-y-3">
+              <div className="space-y-4">
+                <h4 className="text-md font-semibold text-gray-800 border-t pt-4">Gradient Options</h4>
+                
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -412,6 +476,75 @@ export default function QRStyler({ data, onQRGenerated }: QRStylerProps) {
                     className="rounded"
                   />
                   <span className="text-sm font-medium text-gray-700">Use Gradient for Dots</span>
+                </label>
+
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={!!options.cornersSquareOptions?.gradient}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updateOptions({
+                          cornersSquareOptions: {
+                            ...options.cornersSquareOptions,
+                            color: undefined,
+                            gradient: {
+                              type: 'linear',
+                              rotation: 45,
+                              colorStops: [
+                                { offset: 0, color: '#667eea' },
+                                { offset: 1, color: '#764ba2' }
+                              ]
+                            }
+                          }
+                        });
+                      } else {
+                        updateOptions({ 
+                          cornersSquareOptions: {
+                            ...options.cornersSquareOptions,
+                            gradient: undefined,
+                            color: '#000000'
+                          }
+                        });
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Use Gradient for Corner Squares</span>
+                </label>
+
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={!!options.cornersDotOptions?.gradient}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updateOptions({
+                          cornersDotOptions: {
+                            ...options.cornersDotOptions,
+                            color: undefined,
+                            gradient: {
+                              type: 'radial',
+                              colorStops: [
+                                { offset: 0, color: '#ffeaa7' },
+                                { offset: 1, color: '#fab1a0' }
+                              ]
+                            }
+                          }
+                        });
+                      } else {
+                        updateOptions({ 
+                          cornersDotOptions: {
+                            ...options.cornersDotOptions,
+                            gradient: undefined,
+                            color: '#000000'
+                          }
+                        });
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Use Gradient for Corner Dots</span>
                 </label>
 
                 {options.dotsOptions?.gradient && (

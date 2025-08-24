@@ -104,7 +104,7 @@ export class EnhancedQRGenerator {
     } = options;
 
     // Create QR code styling configuration
-    const qrConfig = {
+    const qrConfig: any = {
       width,
       height,
       data,
@@ -154,7 +154,7 @@ export class EnhancedQRGenerator {
     return new Promise((resolve, reject) => {
       try {
         if (format === 'svg') {
-          this.qrCodeStyling.getRawData('svg').then((buffer: ArrayBuffer) => {
+          this.qrCodeStyling!.getRawData('svg').then((buffer: ArrayBuffer) => {
             if (buffer) {
               const decoder = new TextDecoder();
               const svgString = decoder.decode(buffer);
@@ -167,7 +167,7 @@ export class EnhancedQRGenerator {
         } else {
           // For PNG, JPEG, WEBP
           const fileType = format === 'jpeg' ? 'jpg' : format;
-          this.qrCodeStyling.getRawData(fileType).then((buffer: ArrayBuffer) => {
+          this.qrCodeStyling!.getRawData(fileType).then((buffer: ArrayBuffer) => {
             if (buffer) {
               const blob = new Blob([buffer], { 
                 type: format === 'jpeg' ? 'image/jpeg' : `image/${format}` 

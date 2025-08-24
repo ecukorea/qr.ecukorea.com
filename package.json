@@ -5,17 +5,22 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:ssg": "node scripts/build-ssg.js",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "export": "next build",
+    "serve": "npx serve out",
+    "cleanup": "node scripts/cleanup-lib.js",
+    "deploy": "npm run build:ssg"
   },
   "dependencies": {
-    "next": "14.0.0",
+    "next": "15.5.0",
     "qr-code-styling": "^1.9.2",
     "qrcode": "^1.5.3",
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.8.0",
@@ -27,7 +32,7 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
-    "eslint-config-next": "14.0.0",
+    "eslint-config-next": "15.5.0",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8",
