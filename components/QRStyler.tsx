@@ -655,19 +655,43 @@ QR 코드 다운로드
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">로고 및 이미지</h3>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+프리셋 로고
+                  </label>
+                  <button
+                    onClick={() => {
+                      updateOptions({
+                        image: '/ecu-logo.png',
+                        imageOptions: {
+                          hideBackgroundDots: true,
+                          imageSize: 0.4,
+                          margin: 20
+                        }
+                      });
+                    }}
+                    className="flex items-center px-3 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-md hover:bg-purple-100 transition-colors"
+                  >
+                    <img src="/ecu-logo.png" alt="ECU 로고" className="w-6 h-6 mr-2" />
+                    ECU 로고 사용하기
+                  </button>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
 로고 업로드
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleLogoUpload}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
 권장사항: 정사각형 이미지, 투명 배경의 PNG
-                </p>
+                  </p>
+                </div>
               </div>
 
               {options.image && (
