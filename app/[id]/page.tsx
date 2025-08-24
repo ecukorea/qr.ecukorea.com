@@ -24,7 +24,7 @@ export default function RedirectPage({ params }: RedirectPageProps) {
           clearInterval(progressInterval)
           return 100
         }
-        return prev + (100 / 15) // Update every 100ms for 1.5 seconds
+        return prev + (100 / 7) // Update every 100ms for 0.7 seconds
       })
     }, 100)
     
@@ -54,7 +54,7 @@ export default function RedirectPage({ params }: RedirectPageProps) {
               router.showError('알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.')
             }
           }
-        }, 1500) // 1.5 seconds delay
+        }, 700) // 0.7 seconds delay
       } catch (error) {
         console.error('Initial redirect error:', error)
         setIsRedirecting(false)
