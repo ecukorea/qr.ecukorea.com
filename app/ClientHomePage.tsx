@@ -150,7 +150,6 @@ export default function ClientHomePage({ initialSheetsData }: ClientHomePageProp
                         QR 코드 스타일러
                     </h1>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        고급 스타일링 옵션으로 아름답고 맞춤형 QR 코드를 만드세요.
                         다양한 도트 스타일, 색상, 그라데이션 중에서 선택하고 로고를 추가하세요.
                     </p>
                 </header>
